@@ -20,7 +20,7 @@ jobs:
           ls -al
           set -x
           /app/cbp-agent-registry-custom-job --handler "init"
-  custom-approval:
+  custom-remote-job:
     timeout-minutes: 4320
     delegates: swashbuck1r/custom-jobs/custom-job.yml@main
     with:
