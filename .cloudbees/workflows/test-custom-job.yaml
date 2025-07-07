@@ -21,7 +21,7 @@ jobs:
           set -x
           /app/cbp-agent-registry-custom-job --handler "init"
   custom-remote-job:
-    timeout-minutes: 4320
+    timeout-minutes: 5
     delegates: swashbuck1r/custom-jobs/custom-job.yml@main
     with:
       adminToken: ${{ secrets.CBP_AGENT_REGISTRY_TOKEN }}
