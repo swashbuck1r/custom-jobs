@@ -18,6 +18,7 @@ jobs:
         run: |
           echo "hello6"
           ls -al
+          /app/cbp-agent-registry-custom-job --handler "init"
   custom-approval:
     timeout-minutes: 4320
     delegates: swashbuck1r/custom-jobs/custom-job.yml@main
