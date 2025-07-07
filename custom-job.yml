@@ -27,14 +27,19 @@ inputs:
 outputs:
   jobId:
     description: ID of the dispatched job
+    value: ${{ handlers.init.outputs.jobId }}
   status:
     description: Final status of the job (completed, failed, cancelled)
+    value: ${{ handlers.poll.outputs.status }}
   result:
     description: Job execution result
+    value: ${{ handlers.poll.outputs.result }}
   outputs:
     description: Structured outputs from the job execution
+    value: ${{ handlers.poll.outputs.outputs }}
   error:
     description: Error message if job failed
+    value: ${{ handlers.poll.outputs.error }}
 handlers:
   init:
     uses: docker://swashbuck1r/cbp-agent-registry-custom-job:0.0.1
@@ -47,23 +52,15 @@ handlers:
       JOB_TYPE: ${{ inputs.jobType }}
       JOB_DATA: ${{ inputs.jobData }}
       TIMEOUT: ${{ inputs.timeout }}
-  poll: # The poll handler for the custom job.
+  poll:
     uses: docker://swashbuck1r/cbp-agent-registry-custom-job:0.0.1
     command: /app/cbp-agent-registry-custom-job
-    args: --handler "callback"
-    env: # A map of environment variables to pass to the poll
+    args: --handler "poll"
+    env:
       REGISTRY_URL: ${{ inputs.registryUrl }}
       ADMIN_TOKEN: ${{ inputs.adminToken }}
-      PAYLOAD: ${{ handler.payload }}
+      JOB_ID: ${{ handlers.init.outputs.jobId }}
     interval-minutes: 2
-  # callback:
-  #   uses: docker://swashbuck1r/cbp-agent-registry-custom-job:0.0.1
-  #   command: bash
-  #   args: --handler "callback"
-  #   env:
-  #     REGISTRY_URL: ${{ inputs.registryUrl }}
-  #     ADMIN_TOKEN: ${{ inputs.adminToken }}
-  #     PAYLOAD: ${{ handler.payload }}
   cancel:
     uses: docker://swashbuck1r/cbp-agent-registry-custom-job:0.0.1
     command: /app/cbp-agent-registry-custom-job
@@ -71,4 +68,5 @@ handlers:
     env:
       REGISTRY_URL: ${{ inputs.registryUrl }}
       ADMIN_TOKEN: ${{ inputs.adminToken }}
+      JOB_ID: ${{ handlers.init.outputs.jobId }}
       CANCELLATION_REASON: ${{ handler.reason }}
