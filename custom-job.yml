@@ -37,8 +37,8 @@ outputs:
     description: Error message if job failed
 handlers:
   init:
-    uses: docker://swashbuck1r/quickstart-tools:0.0.1
-    command: bash
+    uses: docker://swashbuck1r/cbp-agent-registry-custom-job:0.0.1
+    command: /app/cbp-agent-registry-custom-job
     args: --handler "init"
     env:
       REGISTRY_URL: ${{ inputs.registryUrl }}
