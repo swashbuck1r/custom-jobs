@@ -1,65 +1,68 @@
 apiVersion: automation.cloudbees.io/v1alpha1
 kind: CustomJob
-name: cbp-agent-registry-job
-description: Dispatch jobs to CBP Agent Registry and wait for completion
+name: manual approval
+description: Request manual approval from users and teams
+
 inputs:
-  registryUrl:
-    description: URL of the CBP Agent Registry server
-    required: true
-    default: "https://cbp-agent-registry.arch.beescloud.com"
-  adminToken:
-    description: Admin token for authenticating with the registry
-    required: true
-  tenantId:
-    description: Tenant ID for the job
-    required: true
-  jobType:
-    description: Type of job to execute (e.g., shell, hello, goo)
-    required: true
-    default: "shell"
-  jobData:
-    description: Job-specific data in JSON format
-    required: true
-  timeout:
-    description: Timeout for job execution in seconds
+  approvers:
+    description: Comma separated list of approvers. Can be users or teams. If not specified, then all users who have execute permission for approval on the workflow can approve.
     required: false
-    default: 300
+  instructions:
+    description: Text to display in the approval prompt
+    required: false
+  disallowLaunchByUser:
+    description: For separation of responsibilities, if true, then the user who launched the workflow is not allowed to approve.
+    default: false
+    required: false
+  notifyAllEligibleUsers:
+    description: If true, then all users who are eligible to approve will be notified.
+    default: false
+    required: false
+  approvalInputs:
+    description: Inputs to be provided by the user when approving the manual approval request.
+    required: false
+  debug:
+    description: Set to true to enable debug logging.
+    default: false
+    required: false
 outputs:
-  jobId:
-    description: ID of the dispatched job
-  status:
-    description: Final status of the job (completed, failed, cancelled)
-  result:
-    description: Job execution result
-  outputs:
-    description: Structured outputs from the job execution
-  error:
-    description: Error message if job failed
+  approvalInputValues:
+    description: Input parameter values provided by the user when approving the manual approval request.
+    value: ${{ handlers.callback.outputs.approvalInputValues }}
+  comments:
+    description: The approver's comments
+    value: ${{ handlers.callback.outputs.comments }}
 handlers:
   init:
-    uses: docker://swashbuck1r/cbp-agent-registry-custom-job:0.0.1
-    command: /app/cbp-agent-registry-custom-job
+    uses: docker://public.ecr.aws/l7o7z1g8/custom-jobs/manual-approval:${{ file.scm.sha }}
+    command: /usr/local/bin/manual-approval
     args: --handler "init"
     env:
-      REGISTRY_URL: ${{ inputs.registryUrl }}
-      ADMIN_TOKEN: ${{ inputs.adminToken }}
-      TENANT_ID: ${{ inputs.tenantId }}
-      JOB_TYPE: ${{ inputs.jobType }}
-      JOB_DATA: ${{ inputs.jobData }}
-      TIMEOUT: ${{ inputs.timeout }}
+      APPROVERS: ${{inputs.approvers}}
+      INSTRUCTIONS: ${{inputs.instructions}}
+      DISALLOW_LAUNCHED_BY_USER: ${{inputs.disallowLaunchByUser}}
+      NOTIFY_ALL_ELIGIBLE_USERS: ${{inputs.notifyAllEligibleUsers}}
+      INPUTS: ${{inputs.approvalInputs}}
+      API_TOKEN: ${{ cloudbees.api.token }}
+      URL: ${{ cloudbees.api.url }}
+      DEBUG: ${{ inputs.debug }}
+
   callback:
-    uses: docker://swashbuck1r/cbp-agent-registry-custom-job:0.0.1
-    command: /app/cbp-agent-registry-custom-job
+    uses: docker://public.ecr.aws/l7o7z1g8/custom-jobs/manual-approval:${{ file.scm.sha }}
+    command: /usr/local/bin/manual-approval
     args: --handler "callback"
     env:
-      REGISTRY_URL: ${{ inputs.registryUrl }}
-      ADMIN_TOKEN: ${{ inputs.adminToken }}
       PAYLOAD: ${{ handler.payload }}
+      API_TOKEN: ${{ cloudbees.api.token }}
+      URL: ${{ cloudbees.api.url }}
+      DEBUG: ${{ inputs.debug }}
+
   cancel:
-    uses: docker://swashbuck1r/cbp-agent-registry-custom-job:0.0.1
-    command: /app/cbp-agent-registry-custom-job
+    uses: docker://public.ecr.aws/l7o7z1g8/custom-jobs/manual-approval:${{ file.scm.sha }}
+    command: /usr/local/bin/manual-approval
     args: --handler "cancel"
     env:
-      REGISTRY_URL: ${{ inputs.registryUrl }}
-      ADMIN_TOKEN: ${{ inputs.adminToken }}
       CANCELLATION_REASON: ${{ handler.reason }}
+      API_TOKEN: ${{ cloudbees.api.token }}
+      URL: ${{ cloudbees.api.url }}
+      DEBUG: ${{ inputs.debug }}
