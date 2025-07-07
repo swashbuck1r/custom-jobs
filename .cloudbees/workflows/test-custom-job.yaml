@@ -20,15 +20,27 @@ jobs:
           ls -al
           set -x
           /app/cbp-agent-registry-custom-job --handler "init"
+    needs:
+      - test-approval
   custom-approval:
     timeout-minutes: 4320
     delegates: swashbuck1r/custom-jobs/custom-job.yml@main
     with:
       adminToken: ${{ secrets.CBP_AGENT_REGISTRY_TOKEN }}
-      tenantId: "tenant-123"
-      jobType: "shell"
+      tenantId: tenant-123
+      jobType: shell
       jobData: |
         {
           "command": "ls -al"
         }
       timeout: 600
+  test-approval:
+    timeout-minutes: 4320
+    delegates: cloudbees-io/manual-approval/custom-job.yml@v1
+    with:
+      approvers: 310969a0-e7fb-11ea-a794-42010a83ae1a
+      disallowLaunchByUser: false
+      debug: true
+      instructions: Approved?
+      approvalInputs: |
+        {}
