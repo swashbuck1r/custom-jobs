@@ -55,7 +55,7 @@ handlers:
       REGISTRY_URL: ${{ inputs.registryUrl }}
       ADMIN_TOKEN: ${{ inputs.adminToken }}
       PAYLOAD: ${{ handler.payload }}
-    interval-minutes: 1
+    interval-minutes: 2
   # callback:
   #   uses: docker://swashbuck1r/cbp-agent-registry-custom-job:0.0.1
   #   command: bash
