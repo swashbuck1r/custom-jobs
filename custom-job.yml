@@ -37,8 +37,8 @@ outputs:
     description: Error message if job failed
 handlers:
   init:
-    uses: docker://swashbuck1r/cbp-agent-registry-custom-job:0.0.1
-    command: /app/cbp-agent-registry-custom-job
+    uses: docker://swashbuck1r/quickstart-tools:0.0.1
+    command: bash
     args: --handler "init"
     env:
       REGISTRY_URL: ${{ inputs.registryUrl }}
@@ -47,19 +47,19 @@ handlers:
       JOB_TYPE: ${{ inputs.jobType }}
       JOB_DATA: ${{ inputs.jobData }}
       TIMEOUT: ${{ inputs.timeout }}
-  callback:
-    uses: docker://swashbuck1r/cbp-agent-registry-custom-job:0.0.1
-    command: /app/cbp-agent-registry-custom-job
-    args: --handler "callback"
-    env:
-      REGISTRY_URL: ${{ inputs.registryUrl }}
-      ADMIN_TOKEN: ${{ inputs.adminToken }}
-      PAYLOAD: ${{ handler.payload }}
-  cancel:
-    uses: docker://swashbuck1r/cbp-agent-registry-custom-job:0.0.1
-    command: /app/cbp-agent-registry-custom-job
-    args: --handler "cancel"
-    env:
-      REGISTRY_URL: ${{ inputs.registryUrl }}
-      ADMIN_TOKEN: ${{ inputs.adminToken }}
-      CANCELLATION_REASON: ${{ handler.reason }}
+  # callback:
+  #   uses: docker://swashbuck1r/cbp-agent-registry-custom-job:0.0.1
+  #   command: /app/cbp-agent-registry-custom-job
+  #   args: --handler "callback"
+  #   env:
+  #     REGISTRY_URL: ${{ inputs.registryUrl }}
+  #     ADMIN_TOKEN: ${{ inputs.adminToken }}
+  #     PAYLOAD: ${{ handler.payload }}
+  # cancel:
+  #   uses: docker://swashbuck1r/cbp-agent-registry-custom-job:0.0.1
+  #   command: /app/cbp-agent-registry-custom-job
+  #   args: --handler "cancel"
+  #   env:
+  #     REGISTRY_URL: ${{ inputs.registryUrl }}
+  #     ADMIN_TOKEN: ${{ inputs.adminToken }}
+  #     CANCELLATION_REASON: ${{ handler.reason }}
