@@ -1,0 +1,65 @@
+apiVersion: automation.cloudbees.io/v1alpha1
+kind: CustomJob
+name: cbp-agent-registry-job
+description: Dispatch jobs to CBP Agent Registry and wait for completion
+inputs:
+  registryUrl:
+    description: URL of the CBP Agent Registry server
+    required: true
+    default: "https://cbp-agent-registry.arch.beescloud.com"
+  adminToken:
+    description: Admin token for authenticating with the registry
+    required: true
+  tenantId:
+    description: Tenant ID for the job
+    required: true
+  jobType:
+    description: Type of job to execute (e.g., shell, hello, goo)
+    required: true
+    default: "shell"
+  jobData:
+    description: Job-specific data in JSON format
+    required: true
+  timeout:
+    description: Timeout for job execution in seconds
+    required: false
+    default: 300
+outputs:
+  jobId:
+    description: ID of the dispatched job
+  status:
+    description: Final status of the job (completed, failed, cancelled)
+  result:
+    description: Job execution result
+  outputs:
+    description: Structured outputs from the job execution
+  error:
+    description: Error message if job failed
+handlers:
+  init:
+    uses: docker://swashbuck1r/cbp-agent-registry-custom-job:0.0.1
+    command: /app/cbp-agent-registry-custom-job
+    args: --handler "init"
+    env:
+      REGISTRY_URL: ${{ inputs.registryUrl }}
+      ADMIN_TOKEN: ${{ inputs.adminToken }}
+      TENANT_ID: ${{ inputs.tenantId }}
+      JOB_TYPE: ${{ inputs.jobType }}
+      JOB_DATA: ${{ inputs.jobData }}
+      TIMEOUT: ${{ inputs.timeout }}
+  callback:
+    uses: docker://swashbuck1r/cbp-agent-registry-custom-job:0.0.1
+    command: /app/cbp-agent-registry-custom-job
+    args: --handler "callback"
+    env:
+      REGISTRY_URL: ${{ inputs.registryUrl }}
+      ADMIN_TOKEN: ${{ inputs.adminToken }}
+      PAYLOAD: ${{ handler.payload }}
+  cancel:
+    uses: docker://swashbuck1r/cbp-agent-registry-custom-job:0.0.1
+    command: /app/cbp-agent-registry-custom-job
+    args: --handler "cancel"
+    env:
+      REGISTRY_URL: ${{ inputs.registryUrl }}
+      ADMIN_TOKEN: ${{ inputs.adminToken }}
+      CANCELLATION_REASON: ${{ handler.reason }}
