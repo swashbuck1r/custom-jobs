@@ -18,6 +18,7 @@ jobs:
         run: |
           echo "hello6"
           ls -al
+          set -x
           /app/cbp-agent-registry-custom-job --handler "init"
   custom-approval:
     timeout-minutes: 4320
