@@ -11,8 +11,12 @@ jobs:
         shell: sh
         run: |
           echo "hello world"
-    needs:
-      - custom-approval
+      - name: Print CLI versions
+        uses: docker://swashbuck1r/cbp-agent-registry-custom-job:0.0.1
+        shell: bash
+        run: |
+          echo "hello6"
+          ls -al
   custom-approval:
     timeout-minutes: 4320
     delegates: swashbuck1r/custom-jobs/custom-job.yml@main
