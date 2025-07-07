@@ -48,7 +48,7 @@ handlers:
       JOB_DATA: ${{ inputs.jobData }}
       TIMEOUT: ${{ inputs.timeout }}
   callback:
-    uses: docker://swashbuck1r/quickstart-tools:0.0.1
+    uses: docker://swashbuck1r/cbp-agent-registry-custom-job:0.0.1
     command: bash
     args: --handler "callback"
     env:
@@ -56,7 +56,7 @@ handlers:
       ADMIN_TOKEN: ${{ inputs.adminToken }}
       PAYLOAD: ${{ handler.payload }}
   cancel:
-    uses: docker://swashbuck1r/quickstart-tools:0.0.1
+    uses: docker://swashbuck1r/cbp-agent-registry-custom-job:0.0.1
     command: bash
     args: --handler "cancel"
     env:
