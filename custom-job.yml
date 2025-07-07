@@ -28,18 +28,6 @@ outputs:
   jobId:
     description: ID of the dispatched job
     value: ${{ handlers.init.outputs.jobId }}
-  status:
-    description: Final status of the job (completed, failed, cancelled)
-    value: ${{ handlers.poll.outputs.status }}
-  result:
-    description: Job execution result
-    value: ${{ handlers.poll.outputs.result }}
-  outputs:
-    description: Structured outputs from the job execution
-    value: ${{ handlers.poll.outputs.outputs }}
-  error:
-    description: Error message if job failed
-    value: ${{ handlers.poll.outputs.error }}
 handlers:
   init:
     uses: docker://swashbuck1r/cbp-agent-registry-custom-job:0.0.1
