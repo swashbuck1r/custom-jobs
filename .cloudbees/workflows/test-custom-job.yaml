@@ -11,6 +11,7 @@ jobs:
         shell: sh
         run: |
           echo "hello world"
+          uname -m
       - name: Print CLI versions
         uses: docker://swashbuck1r/cbp-agent-registry-custom-job:0.0.1
         shell: bash
