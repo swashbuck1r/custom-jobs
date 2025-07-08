@@ -40,15 +40,25 @@ handlers:
       JOB_TYPE: ${{ inputs.jobType }}
       JOB_DATA: ${{ inputs.jobData }}
       TIMEOUT: ${{ inputs.timeout }}
-  poll:
+      CALLBACK_URL: ${{ callback.url }}
+      CALLBACK_TOKEN: ${{ callback.token }}
+  callback:
     uses: docker://swashbuck1r/cbp-agent-registry-custom-job:0.0.1
     command: /app/cbp-agent-registry-custom-job
-    args: --handler "poll"
+    args: --handler "callback"
     env:
       REGISTRY_URL: ${{ inputs.registryUrl }}
       ADMIN_TOKEN: ${{ inputs.adminToken }}
       JOB_ID: ${{ handlers.init.outputs.jobId }}
-    interval-minutes: 2
+  # poll:
+  #   uses: docker://swashbuck1r/cbp-agent-registry-custom-job:0.0.1
+  #   command: /app/cbp-agent-registry-custom-job
+  #   args: --handler "poll"
+  #   env:
+  #     REGISTRY_URL: ${{ inputs.registryUrl }}
+  #     ADMIN_TOKEN: ${{ inputs.adminToken }}
+  #     JOB_ID: ${{ handlers.init.outputs.jobId }}
+  #   interval-minutes: 2
   cancel:
     uses: docker://swashbuck1r/cbp-agent-registry-custom-job:0.0.1
     command: /app/cbp-agent-registry-custom-job
