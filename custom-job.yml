@@ -50,6 +50,7 @@ handlers:
       REGISTRY_URL: ${{ inputs.registryUrl }}
       ADMIN_TOKEN: ${{ inputs.adminToken }}
       JOB_ID: ${{ handlers.init.outputs.jobId }}
+      PAYLOAD: ${{ handler.payload }}
   # poll:
   #   uses: docker://swashbuck1r/cbp-agent-registry-custom-job:0.0.1
   #   command: /app/cbp-agent-registry-custom-job
